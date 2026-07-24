@@ -8,8 +8,8 @@ small, uniform, and highly opinionated, so new code should be indistinguishable 
 A thin, strongly-typed PHP 8.5+ **OAuth 2.0 client**. It fetches access tokens from a token endpoint,
 caches them in an interchangeable key-value store, and only re-fetches when the cached token is
 missing, expired, or a refresh is forced. Two grant types ship: refresh-token and client-credentials.
-It builds on two sibling libraries — `christianjbrown/php-api-client-lib` (the JSON request sender)
-and `christianjbrown/php-key-value-store-lib` (the token caches) — and is consumed by other libraries
+It builds on two sibling libraries — `christianjbrown/api-client` (the JSON request sender)
+and `christianjbrown/key-value-store` (the token caches) — and is consumed by other libraries
 and a cloud function, so **the public API must not change** (class/interface names, the
 `ChristianBrown\OAuth2Client\` namespace, and every public method + constructor signature are frozen).
 
@@ -17,7 +17,7 @@ and a cloud function, so **the public API must not change** (class/interface nam
 
 Binaries install into `bin/` (Composer `bin-dir`), not `vendor/bin/`. Both `bin/` and `vendor/` are
 gitignored and Composer-installed, so run `composer install` first. The runtime deps and the style
-tooling (private `christianjbrown/php-code-quality-scripts` — php-cs-fixer (`@PhpCsFixer`/`@Symfony`)
+tooling (private `christianjbrown/code-quality-scripts` — php-cs-fixer (`@PhpCsFixer`/`@Symfony`)
 for formatting + PHP_CodeSniffer 4 with the **`ChristianBrown` coding standard** (slevomat sniffs plus
 PSR/PEAR/Squiz/Generic) for linting) are private `dev-main` GitHub packages; installing them needs SSH/`COMPOSER_AUTH`
 access to those repos.
@@ -66,10 +66,10 @@ Everything lives under the `ChristianBrown\OAuth2Client\` namespace (`src/`), mi
   JSON payload (the `KEY_*` field-name constants live on the interface) and builds an `AccessToken`,
   throwing `BadResponsePayloadFieldException` on any missing/mistyped field.
 - **`Model\Exception\`** — the exception hierarchy, rooted at `ExceptionInterface extends Throwable`.
-  `RequestException` wraps a failed `php-api-client-lib` request (exposes `getRequestException()`);
+  `RequestException` wraps a failed `api-client` request (exposes `getRequestException()`);
   `BadResponsePayloadFieldException` reports a bad payload field (`getField()`, `getData()`). Each
   concrete exception is `final` and implements a matching `...Interface extends ExceptionInterface`.
-  There are **no abstract base classes** here (a flat model, like `php-smartthings-api-lib`).
+  There are **no abstract base classes** here (a flat model, like `smartthings-api-sdk`).
 
 Both managers share the same private `getCachedAccessToken(bool $forceNew): ?AccessTokenInterface`
 helper (deliberately duplicated rather than hoisted into a shared base — the estate prefers duplication
@@ -98,7 +98,7 @@ caller hits the endpoint.
   `AccessTokenTransformerInterface`) so everything is mockable.
 - **A method that does not use `$this` must be `static`** (called via `self::`) — a stateless helper
   is static. Enforced for private methods by the shared `RequireStaticPrivateMethodRule` PHPStan rule
-  (via `php-code-quality-scripts`' `config/phpstan.neon`); interface/override methods stay instance.
+  (via `code-quality-scripts`' `config/phpstan.neon`); interface/override methods stay instance.
 
 ## Testing
 
