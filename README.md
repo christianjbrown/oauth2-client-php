@@ -1,10 +1,10 @@
 # OAuth2 Client
 
-[![CI](https://github.com/christianjbrown/php-oauth2-client-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/php-oauth2-client-lib/actions/workflows/ci.yml)
+[![CI](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml)
 
 A small, strongly-typed PHP **OAuth 2.0 client** that fetches and caches access tokens. It hides
 the token endpoint behind a couple of token managers, caches the resulting access (and refresh) token
-in an interchangeable [key-value store](https://github.com/christianjbrown/php-key-value-store-lib),
+in an interchangeable [key-value store](https://github.com/christianjbrown/key-value-store-php),
 and only calls the endpoint again when the cached token is missing, expired, or a refresh is forced.
 
 Two grant types ship today:
@@ -33,7 +33,7 @@ library exception hierarchy, so callers stay decoupled from the underlying HTTP 
 For your composer-enabled project:
 
 ```bash
-composer require christianjbrown/php-oauth2-client-lib
+composer require christianjbrown/oauth2-client
 ```
 
 
@@ -41,7 +41,7 @@ composer require christianjbrown/php-oauth2-client-lib
 ## :computer: Usage
 
 Both managers are constructed with a JSON API request sender (from
-[`php-api-client-lib`](https://github.com/christianjbrown/php-api-client-lib)), one or more key-value
+[`api-client`](https://github.com/christianjbrown/api-client-php)), one or more key-value
 stores for the cached tokens, an access-token transformer, and the token endpoint URL.
 
 
@@ -119,7 +119,7 @@ Everything the library throws implements
 `ChristianBrown\OAuth2Client\Model\Exception\ExceptionInterface` (which extends `Throwable`):
 
 - **`RequestExceptionInterface`** — the token endpoint request failed. The original
-  `php-api-client-lib` exception is available via `getRequestException()`.
+  `api-client` exception is available via `getRequestException()`.
 - **`BadResponsePayloadFieldExceptionInterface`** — the endpoint responded, but a field was missing,
   the wrong type, or an unsupported value. `getField()` and `getData()` expose the offending field and
   the full payload.
