@@ -137,6 +137,27 @@ final class AccessTokenTransformerTest extends TestCase
         self::assertTrue($exceptionThrown);
     }
 
+    #[TestWith(['MAC'])]
+    #[TestWith(['not-a-token-type'])]
+    public function testTransformFailureUnmappedTokenType(string $tokenType): void
+    {
+        $data = self::GOOD_RESPONSE_PAYLOAD;
+        $data[AccessTokenTransformerInterface::KEY_TOKEN_TYPE] = $tokenType;
+        $transformer = new AccessTokenTransformer();
+
+        $exceptionThrown = false;
+
+        try {
+            $transformer->transform($data);
+        } catch (BadResponsePayloadFieldExceptionInterface $e) {
+            $exceptionThrown = true;
+            self::assertSame(AccessTokenTransformerInterface::KEY_TOKEN_TYPE, $e->getField());
+            self::assertSame($data, $e->getData());
+        }
+
+        self::assertTrue($exceptionThrown);
+    }
+
     public function testTransformSuccess(): void
     {
         $transformer = new AccessTokenTransformer();
@@ -151,9 +172,14 @@ final class AccessTokenTransformerTest extends TestCase
     #[TestWith(['bearer'])]
     #[TestWith(['BEARER'])]
     #[TestWith(['Bearer'])]
+    #[TestWith(['Application Access Token'])]
+    #[TestWith(['application access token'])]
+    #[TestWith(['User Access Token'])]
     public function testTransformSuccessWithCaseInsensitiveTokenType(string $tokenType): void
     {
-        // RFC 6749 section 7.1: token_type is case-insensitive.
+        // RFC 6749 section 7.1: token_type is case-insensitive. eBay also
+        // describes the grant rather than the scheme, and its tokens are
+        // still bearer tokens.
         $data = self::GOOD_RESPONSE_PAYLOAD;
         $data[AccessTokenTransformerInterface::KEY_TOKEN_TYPE] = $tokenType;
 
