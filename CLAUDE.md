@@ -17,10 +17,9 @@ and a cloud function, so **the public API must not change** (class/interface nam
 
 Binaries install into `bin/` (Composer `bin-dir`), not `vendor/bin/`. Both `bin/` and `vendor/` are
 gitignored and Composer-installed, so run `composer install` first. The runtime deps and the style
-tooling (private `christianjbrown/code-quality-scripts` — php-cs-fixer (`@PhpCsFixer`/`@Symfony`)
+tooling (`christianjbrown/code-quality-scripts` — php-cs-fixer (`@PhpCsFixer`/`@Symfony`)
 for formatting + PHP_CodeSniffer 4 with the **`ChristianBrown` coding standard** (slevomat sniffs plus
-PSR/PEAR/Squiz/Generic) for linting) are private `dev-main` GitHub packages; installing them needs SSH/`COMPOSER_AUTH`
-access to those repos.
+PSR/PEAR/Squiz/Generic) for linting) are public packages on Packagist.
 
 | Task | Command |
 | --- | --- |
@@ -36,8 +35,9 @@ Always run `composer fix-style` first (php-cs-fixer auto-fixes what it can), the
 check-style` to surface remaining violations that must be fixed by hand, then `composer stan`, then
 `composer test` before finishing. If the `composer stan` wrapper runs out of memory, invoke PHPStan
 directly: `./bin/phpstan analyse --no-progress --memory-limit=-1`. CI (`.github/workflows/ci.yml`)
-runs the same three gates — style → PHPStan → PHPUnit-with-coverage — on push/PR to `main`, supplying
-private-repo credentials via the `COMPOSER_AUTH` secret.
+runs the same three gates — style → PHPStan → PHPUnit-with-coverage — on push/PR to `main`.
+The coverage run writes `.phpunit.cache/coverage.txt` and `./bin/php-coverage-check` then fails the
+build if classes, methods, paths, branches or lines drop below 100%.
 
 ## Architecture
 
