@@ -1,6 +1,6 @@
 # OAuth2 Client
 
-[![CI](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml) [![Packagist](https://img.shields.io/packagist/v/christianjbrown/oauth2-client)](https://packagist.org/packages/christianjbrown/oauth2-client)
+[![CI](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/oauth2-client-php/actions/workflows/ci.yml) [![Packagist](https://img.shields.io/packagist/v/christianjbrown/oauth2-client)](https://packagist.org/packages/christianjbrown/oauth2-client) [![License](https://img.shields.io/packagist/l/christianjbrown/oauth2-client)](https://github.com/christianjbrown/oauth2-client-php/blob/main/LICENSE) [![PHP](https://img.shields.io/packagist/dependency-v/christianjbrown/oauth2-client/php)](https://packagist.org/packages/christianjbrown/oauth2-client)
 
 A small, strongly-typed PHP **OAuth 2.0 client** that fetches and caches access tokens. It hides
 the token endpoint behind a couple of token managers, caches the resulting access (and refresh) token
