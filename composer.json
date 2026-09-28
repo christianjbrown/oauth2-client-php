@@ -18,12 +18,12 @@
     ],
     "require": {
         "php": "^8.5",
-        "christianjbrown/api-client": "dev-main",
-        "christianjbrown/key-value-store": "dev-main",
+        "christianjbrown/api-client": "^1.0",
+        "christianjbrown/key-value-store": "^1.0",
         "psr/http-client": "^1.0"
     },
     "require-dev": {
-        "christianjbrown/code-quality-scripts": "dev-main",
+        "christianjbrown/code-quality-scripts": "^1.0",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^13.0"
     },
@@ -62,19 +62,5 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
-    },
-    "repositories": [
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/api-client-php.git"
-        },
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/key-value-store-php.git"
-        },
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/code-quality-scripts-php.git"
-        }
-    ]
+    }
 }
