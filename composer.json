@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.5",
         "christianjbrown/api-client": "^1.0",
-        "christianjbrown/key-value-store": "^1.0",
+        "christianjbrown/key-value-store": "^1.0 || ^2.0",
         "psr/http-client": "^1.0"
     },
     "require-dev": {

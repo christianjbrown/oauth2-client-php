@@ -6,6 +6,12 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-30
+
+### Changed
+
+- Allows christianjbrown/key-value-store 2.0 as well as 1.x. Nothing this package uses from it changed.
+
 ## [1.0.0] - 2026-09-28
 
 First stable release.
@@ -30,5 +36,6 @@ First stable release.
 - `token_type` matching that ignores case and accepts the aliases in `TOKEN_TYPE_ALIASES`, including
   eBay's "Application Access Token" and "User Access Token", which are bearer tokens.
 
-[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/christianjbrown/oauth2-client-php/releases/tag/v1.0.0
