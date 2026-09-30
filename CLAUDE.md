@@ -39,6 +39,12 @@ runs the same three gates — style → PHPStan → PHPUnit-with-coverage — on
 The coverage run writes `.phpunit.cache/coverage.txt` and `./bin/php-coverage-check` then fails the
 build if classes, methods, paths, branches or lines drop below 100%.
 
+## Changelog
+
+`CHANGELOG.md` follows Keep a Changelog. A pull request that changes `src/` must add a line under
+`## [Unreleased]`; CI enforces it with `bin/php-changelog-check`. A release renames that section to the
+version and the date, and its text becomes the GitHub release notes.
+
 ## Architecture
 
 Everything lives under the `ChristianBrown\OAuth2Client\` namespace (`src/`), mirrored under
