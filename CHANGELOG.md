@@ -6,6 +6,12 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-10-01
+
+### Changed
+
+- The archive Composer installs no longer contains the tests, CI and editor configuration, `CLAUDE.md` or other development-only files, only the library itself, its README, CHANGELOG and LICENSE.
+
 ## [2.1.0] - 2026-10-01
 
 ### Changed
@@ -69,7 +75,8 @@ First stable release.
 - `token_type` matching that ignores case and accepts the aliases in `TOKEN_TYPE_ALIASES`, including
   eBay's "Application Access Token" and "User Access Token", which are bearer tokens.
 
-[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.0...v1.0.1
