@@ -6,6 +6,8 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-01
+
 ### Changed
 
 - Allows `christianjbrown/api-client` 2.x and 3.x as well as 1.x. The `JsonApiRequestSenderInterface` methods this package calls are unchanged in both.
@@ -67,7 +69,8 @@ First stable release.
 - `token_type` matching that ignores case and accepts the aliases in `TOKEN_TYPE_ALIASES`, including
   eBay's "Application Access Token" and "User Access Token", which are bearer tokens.
 
-[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/christianjbrown/oauth2-client-php/releases/tag/v1.0.0
