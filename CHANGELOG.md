@@ -6,6 +6,33 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-01
+
+### Added
+
+- `RefreshTokenManagerFactory` and `ClientCredentialsTokenManagerFactory` (each with an interface), which build a
+  manager with its default wiring in one call. They take a PSR-20 clock.
+- `ClientAuthenticationInterface` with `PublicClientAuthentication` (sends `client_id` in the body) and
+  `ClientSecretBasicAuthentication` (HTTP Basic), replacing the optional client secret.
+- `Lock\NullLock`, a lock that never blocks, for use where `RefreshTokenManager` previously ran without a lock.
+- Small collaborators the managers are now built from: `CachedTokenFlow` (the cache, lock, request and store flow
+  both grants share), `TokenGrantInterface` with `RefreshTokenGrant` and `ClientCredentialsGrant` (the
+  grant-specific request), `AccessTokenCache`, `TokenExpiryCalculator`, `InvalidGrantClassifier` and `TokenEndpoint`.
+  A new grant type is a new `TokenGrantInterface` implementation.
+- Requires `psr/clock` and `symfony/clock`.
+
+### Changed
+
+- Allows `christianjbrown/key-value-store` 3.0 as well as 1.x and 2.x. The interfaces this package uses did not change.
+- **Breaking:** `RefreshTokenManager::__construct()` now takes `(CachedTokenFlowInterface $flow,
+  RefreshTokenGrantFactoryInterface $grantFactory)`. Use `RefreshTokenManagerFactory::create()` for the old
+  one-call construction. The lock is now required there (pass `new NullLock()` for none) and the client
+  secret is replaced by a `ClientAuthenticationInterface`.
+- **Breaking:** `ClientCredentialsTokenManager::__construct()` now takes `(CachedTokenFlowInterface $flow,
+  ClientCredentialsGrantFactoryInterface $grantFactory)`. Use `ClientCredentialsTokenManagerFactory::create()`.
+- Token expiry is read from the injected clock each time it is needed instead of the global `time()`.
+  The expiry is now computed when the token is stored, after the request returns, rather than before it is sent.
+
 ## [1.0.1] - 2026-09-30
 
 ### Changed
@@ -36,6 +63,7 @@ First stable release.
 - `token_type` matching that ignores case and accepts the aliases in `TOKEN_TYPE_ALIASES`, including
   eBay's "Application Access Token" and "User Access Token", which are bearer tokens.
 
-[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/christianjbrown/oauth2-client-php/releases/tag/v1.0.0

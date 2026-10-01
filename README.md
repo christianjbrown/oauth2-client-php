@@ -40,24 +40,29 @@ composer require christianjbrown/oauth2-client
 
 ## :computer: Usage
 
-Both managers are constructed with a JSON API request sender (from
+Build a manager with its factory. Each factory takes a PSR-20 clock (these examples use
+`Symfony\Component\Clock\NativeClock`) and builds the manager from a JSON API request sender (from
 [`api-client`](https://github.com/christianjbrown/api-client-php)), one or more key-value
-stores for the cached tokens, an access-token transformer, and the token endpoint URL.
+stores for the cached tokens, the token endpoint URL and a lock. Pass `NullLock` when only one
+process refreshes tokens at a time.
 
 
 
 ### :arrows_counterclockwise: Refresh token grant
 
 ```php
-use ChristianBrown\OAuth2Client\RefreshTokenManager;
-use ChristianBrown\OAuth2Client\Transformer\AccessTokenTransformer;
+use ChristianBrown\OAuth2Client\Authentication\PublicClientAuthentication;
+use ChristianBrown\OAuth2Client\Lock\NullLock;
+use ChristianBrown\OAuth2Client\RefreshTokenManagerFactory;
+use Symfony\Component\Clock\NativeClock;
 
-$manager = new RefreshTokenManager(
-    $jsonApiRequestSender, // ChristianBrown\ApiClient\JsonApiRequestSenderInterface
-    $accessTokenStore,     // ChristianBrown\KeyValueStore\KeyValueStoreInterface
-    $refreshTokenStore,    // ChristianBrown\KeyValueStore\KeyValueStoreInterface
-    new AccessTokenTransformer(),
+$manager = (new RefreshTokenManagerFactory(new NativeClock()))->create(
+    $jsonApiRequestSender,           // ChristianBrown\ApiClient\JsonApiRequestSenderInterface
+    $accessTokenStore,               // ChristianBrown\KeyValueStore\TtlAwareKeyValueStoreInterface
+    $refreshTokenStore,              // ChristianBrown\KeyValueStore\KeyValueStoreInterface
     'https://example.com/oauth/token',
+    new PublicClientAuthentication(), // or new ClientSecretBasicAuthentication('my-client-secret')
+    new NullLock(),                  // or your own LockInterface implementation
 );
 
 $accessToken = $manager->getAccessToken('my-client-id');
@@ -77,14 +82,15 @@ refresh token to the endpoint, caches the new access and refresh tokens, and ret
 ### :key: Client credentials grant
 
 ```php
-use ChristianBrown\OAuth2Client\ClientCredentialsTokenManager;
-use ChristianBrown\OAuth2Client\Transformer\AccessTokenTransformer;
+use ChristianBrown\OAuth2Client\ClientCredentialsTokenManagerFactory;
+use ChristianBrown\OAuth2Client\Lock\NullLock;
+use Symfony\Component\Clock\NativeClock;
 
-$manager = new ClientCredentialsTokenManager(
+$manager = (new ClientCredentialsTokenManagerFactory(new NativeClock()))->create(
     $jsonApiRequestSender, // ChristianBrown\ApiClient\JsonApiRequestSenderInterface
-    $accessTokenStore,     // ChristianBrown\KeyValueStore\KeyValueStoreInterface
-    new AccessTokenTransformer(),
+    $accessTokenStore,     // ChristianBrown\KeyValueStore\TtlAwareKeyValueStoreInterface
     'https://example.com/oauth/token',
+    new NullLock(),
 );
 
 // The Basic auth value is the raw "client_id:client_secret"; the manager base64-encodes it.
@@ -96,6 +102,25 @@ $accessToken = $manager->getAccessTokenFromBasicAuth(
 
 $accessToken->getAccessToken();
 ```
+
+
+### :arrow_up: Upgrading to 2.0
+
+The manager constructors now take their collaborators, so build managers with the factories. `AccessTokenTransformer`
+and `LockInterface` are unchanged.
+
+```php
+// Before
+$manager = new RefreshTokenManager($sender, $accessStore, $refreshStore, new AccessTokenTransformer(), $url, $clientSecret, $lock);
+$manager = new ClientCredentialsTokenManager($sender, $accessStore, new AccessTokenTransformer(), $url);
+
+// After
+$factory = new RefreshTokenManagerFactory(new NativeClock());
+$manager = $factory->create($sender, $accessStore, $refreshStore, $url, new ClientSecretBasicAuthentication($clientSecret), $lock);
+$manager = (new ClientCredentialsTokenManagerFactory(new NativeClock()))->create($sender, $accessStore, $url, new NullLock());
+```
+
+Without a client secret use `new PublicClientAuthentication()`; without a lock use `new NullLock()`.
 
 
 
