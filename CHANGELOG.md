@@ -6,6 +6,10 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Allows `christianjbrown/api-client` 2.x and 3.x as well as 1.x. The `JsonApiRequestSenderInterface` methods this package calls are unchanged in both.
+
 ## [2.0.0] - 2026-10-01
 
 ### Added
