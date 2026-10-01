@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for working in this repository. Match the existing conventions exactly — this codebase is
+Guidance for working in this repository. Match the existing conventions exactly, this codebase is
 small, uniform, and highly opinionated, so new code should be indistinguishable from what's here.
 
 ## What this is
@@ -8,10 +8,9 @@ small, uniform, and highly opinionated, so new code should be indistinguishable 
 A thin, strongly-typed PHP 8.5+ **OAuth 2.0 client**. It fetches access tokens from a token endpoint,
 caches them in an interchangeable key-value store, and only re-fetches when the cached token is
 missing, expired, or a refresh is forced. Two grant types ship: refresh-token and client-credentials.
-It builds on two sibling libraries — `christianjbrown/api-client` (the JSON request sender)
-and `christianjbrown/key-value-store` (the token caches) — and is consumed by other libraries
-and a cloud function, so **the public API must not change** (class/interface names, the
-`ChristianBrown\OAuth2Client\` namespace, and every public method + constructor signature are frozen).
+It builds on two sibling libraries: `christianjbrown/api-client` (the JSON request sender)
+and `christianjbrown/key-value-store` (the token caches) and is consumed by other libraries
+and a cloud function, so public API changes are breaking and need a major release recorded in the changelog.
 
 ## Commands
 
@@ -53,17 +52,21 @@ Everything lives under the `ChristianBrown\OAuth2Client\` namespace (`src/`), mi
 - **`TokenManagerInterface`** — the shared base contract. Carries the request/header constant keys
   (`HEADER_KEY_*`, `HEADER_VALUE_*`, `REQUEST_KEY_*`). Both concrete managers implement a sub-interface
   of it.
-- **`RefreshTokenManager` / `RefreshTokenManagerInterface`** — `getAccessToken(string $clientId, bool
-  $forceNew = false)`. Constructed with a `JsonApiRequestSenderInterface`, an access-token
-  `TtlAwareKeyValueStoreInterface`, a refresh-token `KeyValueStoreInterface`, an
-  `AccessTokenTransformerInterface`, and the endpoint `string $url`. The access-token store is typed
-  `TtlAwareKeyValueStoreInterface` because the manager reads/writes its expiry (`getTtl()` +
-  `setValue($value, $ttl)`); the refresh-token store only holds a value, so it stays the base
-  `KeyValueStoreInterface`.
-- **`ClientCredentialsTokenManager` / `ClientCredentialsTokenManagerInterface`** —
-  `getAccessTokenFromBasicAuth(string $basicAuthValue, ?string $scope = null, ?string $clientId =
-  null, bool $forceNew = false)`. Same constructor minus the refresh-token store (its access-token
-  store is likewise a `TtlAwareKeyValueStoreInterface`). `BASIC_AUTH_VALUE_SPRINTF` lives on its interface.
+- **`RefreshTokenManager` / `ClientCredentialsTokenManager`** (with interfaces) are thin facades. Each is
+  constructed with a `CachedTokenFlowInterface` and a grant factory
+  (`RefreshTokenGrantFactoryInterface` / `ClientCredentialsGrantFactoryInterface`), and a call builds a
+  bound grant and runs it through the flow. Consumers build them with `RefreshTokenManagerFactory` /
+  `ClientCredentialsTokenManagerFactory`, the composition roots where `new` of collaborators is correct.
+  Factories take a PSR-20 `ClockInterface`; tests use `Symfony\Component\Clock\MockClock`.
+- **`Flow\CachedTokenFlow`** is the one shared flow: cache check, lock, re-check, `TokenGrantInterface::requestToken()`,
+  store. A new grant type is a new `TokenGrantInterface` implementation plus a grant factory and facade, not a copy of the flow.
+- **`Grant\`** holds `RefreshTokenGrant` (reads and rotates the refresh token, clears it on `invalid_grant`) and
+  `ClientCredentialsGrant`, each built per call by its factory. **`Endpoint\TokenEndpoint`** posts the form and
+  transforms the response. **`Authentication\`** is how a refreshing client identifies itself
+  (`PublicClientAuthentication`, `ClientSecretBasicAuthentication`).
+- **`Cache\AccessTokenCache`** reads and writes the access-token store (a `TtlAwareKeyValueStoreInterface`),
+  **`Expiry\TokenExpiryCalculator`** does the TTL arithmetic against the clock, **`Error\InvalidGrantClassifier`**
+  recognises `invalid_grant`, and **`Lock\LockInterface`** / **`NullLock`** serialise refreshes.
 - **`Model\AccessToken` / `AccessTokenInterface`** — the immutable token value object
   (`getAccessToken`, `getExpiresIn`, `getRefreshToken`, `getScope`, `getTokenType`).
 - **`Model\AccessTokenType`, `Model\GrantType`** — string-backed **enums** (keep them enums). Token
@@ -76,11 +79,6 @@ Everything lives under the `ChristianBrown\OAuth2Client\` namespace (`src/`), mi
   `BadResponsePayloadFieldException` reports a bad payload field (`getField()`, `getData()`). Each
   concrete exception is `final` and implements a matching `...Interface extends ExceptionInterface`.
   There are **no abstract base classes** here (a flat model, like `smartthings-api-sdk`).
-
-Both managers share the same private `getCachedAccessToken(bool $forceNew): ?AccessTokenInterface`
-helper (deliberately duplicated rather than hoisted into a shared base — the estate prefers duplication
-over inheritance): it returns the cached token when one is present and unexpired, else `null` so the
-caller hits the endpoint.
 
 ## Conventions (follow all of these)
 
@@ -155,5 +153,4 @@ The `phpunit.xml` config is strict (`requireCoverageMetadata`, `beStrictAboutCov
 4. Add a matching `#[CoversClass]` test under `tests/`, doubling all collaborators per the rules above.
 5. Run `composer fix-style`, then `composer check-style`, then `composer stan`, then `composer test`
    and **confirm the coverage report is 100%** on classes, lines, paths, methods, and branches.
-6. Never change an existing public method signature, constructor, class name, or namespace — external
-   consumers (including a SmartThings cloud function) depend on them.
+6. Public signature changes are breaking: record them under `## [Unreleased]` and in the README upgrade section.
