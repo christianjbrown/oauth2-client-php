@@ -21,6 +21,7 @@ All notable changes to this package are recorded here. The format follows
 
 ### Changed
 
+- Allows `christianjbrown/key-value-store` 3.0 as well as 1.x and 2.x. The interfaces this package uses did not change.
 - **Breaking:** `RefreshTokenManager::__construct()` now takes `(CachedTokenFlowInterface $flow,
   RefreshTokenGrantFactoryInterface $grantFactory)`. Use `RefreshTokenManagerFactory::create()` for the old
   one-call construction. The lock is now required there (pass `new NullLock()` for none) and the client

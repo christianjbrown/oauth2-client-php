@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.5",
         "christianjbrown/api-client": "^1.0",
-        "christianjbrown/key-value-store": "^1.0 || ^2.0",
+        "christianjbrown/key-value-store": "^1.0 || ^2.0 || ^3.0",
         "psr/clock": "^1.0",
         "psr/http-client": "^1.0",
         "symfony/clock": "^7.3 || ^8.0"
