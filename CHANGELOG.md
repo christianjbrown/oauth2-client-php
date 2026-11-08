@@ -10,7 +10,7 @@ All notable changes to this package are recorded here. The format follows
 
 ### Fixed
 
-- A refresh response that carries no `refresh_token` no longer wipes the stored one. RFC 6749 lets the server leave it out, meaning the existing token stays valid, and eBay does exactly that; before this the second refresh went out with an empty token and failed as an invalid grant.
+- A refresh response that carries no `refresh_token` no longer wipes the stored one. RFC 6749 lets a server leave it out, meaning the existing token stays valid; before this the next refresh went out with an empty token and failed as an invalid grant.
 
 ## [2.1.1] - 2026-10-01
 
