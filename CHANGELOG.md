@@ -6,6 +6,12 @@ All notable changes to this package are recorded here. The format follows
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-11-08
+
+### Fixed
+
+- A refresh response that carries no `refresh_token` no longer wipes the stored one. RFC 6749 lets the server leave it out, meaning the existing token stays valid, and eBay does exactly that; before this the second refresh went out with an empty token and failed as an invalid grant.
+
 ## [2.1.1] - 2026-10-01
 
 ### Changed
@@ -75,7 +81,8 @@ First stable release.
 - `token_type` matching that ignores case and accepts the aliases in `TOKEN_TYPE_ALIASES`, including
   eBay's "Application Access Token" and "User Access Token", which are bearer tokens.
 
-[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/christianjbrown/oauth2-client-php/compare/v1.0.1...v2.0.0

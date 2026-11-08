@@ -28,6 +28,26 @@ final class RefreshTokenGrantTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testAResponseWithoutARefreshTokenKeepsTheStoredOne(): void
+    {
+        $accessToken = self::createStub(AccessTokenInterface::class);
+        $accessToken->method('getRefreshToken')->willReturn(null);
+
+        $endpoint = self::createStub(TokenEndpointInterface::class);
+        $endpoint->method('requestToken')->willReturn($accessToken);
+
+        $store = self::createMock(KeyValueStoreInterface::class);
+        $store->method('getValue')->willReturn('test-old-refresh-token');
+        $store->expects(self::never())->method('setValue');
+
+        $grant = new RefreshTokenGrant('test-client-id', $endpoint, $store, self::createStub(ClientAuthenticationInterface::class), self::createStub(InvalidGrantClassifierInterface::class));
+
+        self::assertSame($accessToken, $grant->requestToken());
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testInvalidGrantClearsRefreshTokenAndThrows(): void
     {
         $apiException = self::createStub(ExceptionInterface::class);
