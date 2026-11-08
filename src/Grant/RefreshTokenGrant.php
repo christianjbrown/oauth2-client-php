@@ -69,9 +69,9 @@ final class RefreshTokenGrant implements RefreshTokenGrantInterface
 
     /**
      * RFC 6749 section 6 lets a refresh response leave the refresh token out,
-     * in which case the one already stored stays valid (eBay does this; Etsy
-     * rotates on every refresh). Only a token that was actually issued is
-     * written, so a server that does not rotate never wipes the stored one.
+     * in which case the one already stored stays valid. Only a token that was
+     * actually issued is written, so a server that does not rotate its refresh
+     * tokens never wipes the stored one.
      */
     private function storeRotatedRefreshToken(AccessTokenInterface $accessToken): void
     {
